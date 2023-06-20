@@ -18,8 +18,9 @@ def crear_tabla():
     cursor = con.cursor()
     sql = """CREATE TABLE productos
              (codigoproducto INTEGER PRIMARY KEY,
-             producto varchar(20) NOT NULL,
-             cantidad real,
+             descripcion varchar(20) NOT NULL,
+             stock real,
+             stocmin real,
              precio real)
     """
     cursor.execute(sql)
