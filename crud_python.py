@@ -20,7 +20,7 @@ def crear_tabla():
              (codigoproducto INTEGER PRIMARY KEY,
              descripcion varchar(20) NOT NULL,
              stock real,
-             stocmin real,
+             stockmin real,
              precio real)
     """
     cursor.execute(sql)
@@ -31,18 +31,18 @@ try:
     conexion()
     crear_tabla()
 except:
-    print("Hay un error")
+    print("No se puede conectar a DB")
 
 
-def alta(producto, cantidad, precio, tree):
-    print(producto, cantidad, precio)
+def alta(codigoproducto, descripcion, stock, stockmin, precio, tree):
+    print(codigoproducto, descripcion, stock, stockmin, precio)
     con = conexion()
     cursor = con.cursor()
-    data = (producto, cantidad, precio)
-    sql = "INSERT INTO productos(producto, cantidad, precio) VALUES(?, ?, ?)"
+    data = (codigoproducto, descripcion, stock, stockmin, precio)
+    sql = "INSERT INTO productos(codigoproducto, descripcion, stock, stockmin, precio) VALUES(?, ?, ?, ?, ?)"
     cursor.execute(sql, data)
     con.commit()
-    print("Estoy en alta todo ok")
+    print("Producto cargado con éxito")
     actualizar_treeview(tree)
 
 
@@ -65,7 +65,7 @@ def borrar(tree):
     cursor = con.cursor()
     # mi_id = int(mi_id)
     data = (mi_id,)
-    sql = "DELETE FROM productos WHERE id = ?;"
+    sql = "DELETE FROM productos WHERE codigoproducto = ?;"
     cursor.execute(sql, data)
     con.commit()
     tree.delete(valor)
@@ -92,17 +92,21 @@ def actualizar_treeview(mitreview):
 # ##############################################
 
 root = Tk()
-root.title("Tarea POO")
+root.title("Mercado Negro")
 
 titulo = Label(
-    root, text="Ingrese sus datos", bg="DarkOrchid3", fg="thistle1", height=1, width=60
+    root,
+    text="Sistema de Stock y Ventas",
+    bg="#417E9B",
+    fg="black",
+    height=2,
+    width=80,
 )
 titulo.grid(row=0, column=0, columnspan=4, padx=1, pady=1, sticky=W + E)
-
 producto = Label(root, text="Producto")
 producto.grid(row=1, column=0, sticky=W)
-cantidad = Label(root, text="Cantidad")
-cantidad.grid(row=2, column=0, sticky=W)
+stock = Label(root, text="Cantidad")
+stock.grid(row=2, column=0, sticky=W)
 precio = Label(root, text="Precio")
 precio.grid(row=3, column=0, sticky=W)
 
