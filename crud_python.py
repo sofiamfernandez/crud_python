@@ -1,76 +1,70 @@
 from tkinter import *
+from tkinter import ttk
 from tkinter.messagebox import *
 import sqlite3
-from tkinter import ttk
 import re
 
 
-# ##############################################
-# MODELO
-# ##############################################
+# funciones para base de datos
 def conexion():
-    con = sqlite3.connect("mibase.db")
+    con = sqlite3.connect("Ventas.db")
     return con
 
 
 def crear_tabla():
     con = conexion()
     cursor = con.cursor()
-    sql = """CREATE TABLE productos
-             (codigoproducto INTEGER PRIMARY KEY,
-             descripcion varchar(20) NOT NULL,
-             stock real,
-             stockmin real,
-             precio real)
+    sql = """CREATE TABLE IF NOT EXISTS productos
+             (codigo INTEGER PRIMARY KEY,
+             descripcion varchar(50) NOT NULL,
+             stock_m INTEGER
+             precio FLOAT)
     """
     cursor.execute(sql)
     con.commit()
 
 
-try:
-    conexion()
-    crear_tabla()
-except:
-    print("No se puede conectar a DB")
+# funcion para alta,uso de condicional, regex y notificacion de evento realizado
 
 
-def alta(codigoproducto, descripcion, stock, stockmin, precio, tree):
-    print(codigoproducto, descripcion, stock, stockmin, precio)
+def cargar(codigo, descripcion, stock_m, precio, tree):
+    if not re.match(r"^[A-Za-z0-9\s]+$", descripcion):
+        showerror("Error", "El detalle no puede ser nulo.")
+        return
+
+    print(codigo, descripcion, precio, stock_m)
     con = conexion()
     cursor = con.cursor()
-    data = (codigoproducto, descripcion, stock, stockmin, precio)
-    sql = "INSERT INTO productos(codigoproducto, descripcion, stock, stockmin, precio) VALUES(?, ?, ?, ?, ?)"
+    data = (int(codigo), descripcion, int(precio), int(stock_m))
+    sql = (
+        "INSERT INTO productos(codigo, descripcion, precio, stock_m) VALUES(?, ?, ?, ?)"
+    )
     cursor.execute(sql, data)
     con.commit()
-    print("Producto cargado con éxito")
+    print("Producto registrado")
     actualizar_treeview(tree)
 
 
-def consultar():
-    global compra
-    print(compra)
-
-
-def borrar(tree):
+# funcion para la baja
+def eliminar(tree):
     valor = tree.selection()
-    print(valor)  # ('I005',)
+    print(valor)
     item = tree.item(valor)
-    print(
-        item
-    )  # {'text': 5, 'image': '', 'values': ['daSDasd', '13.0', '2.0'], 'open':0, 'tags': ''}
+    print(item)
     print(item["text"])
     mi_id = item["text"]
 
     con = conexion()
     cursor = con.cursor()
-    # mi_id = int(mi_id)
+
     data = (mi_id,)
-    sql = "DELETE FROM productos WHERE codigoproducto = ?;"
+    sql = "DELETE FROM productos WHERE codigo = ?;"
     cursor.execute(sql, data)
     con.commit()
     tree.delete(valor)
 
 
+# consulta y uso de bucles
 def actualizar_treeview(mitreview):
     records = mitreview.get_children()
     for element in records:
@@ -84,67 +78,131 @@ def actualizar_treeview(mitreview):
     resultado = datos.fetchall()
     for fila in resultado:
         print(fila)
-        mitreview.insert("", 0, text=fila[0], values=(fila[1], fila[2], fila[3]))
+        mitreview.insert("", 0, text=fila[0], values=(fila[1], fila[2]))
 
 
-# ##############################################
-# VISTA
-# ##############################################
+# funcion para modificacion
+def modificar(codigo, descripcion, stock_m, precio, tree):
+    valor = tree.selection()
+    item = tree.item(valor)
+    mi_id = item["text"]
 
-root = Tk()
-root.title("Mercado Negro")
+    con = conexion()
+    cursor = con.cursor()
+    data = (codigo, descripcion, stock_m, precio, mi_id)
+    sql = (
+        "UPDATE productos SET codigo=?, descripcion=?, stock_m=?, precio=?, WHERE id=?"
+    )
+    cursor.execute(sql, data)
+    con.commit()
+    print("Producto modificado")
+    actualizar_treeview(tree)
+
+
+# llamada a la funcion para conexion de base de datos y creacion de tabla
+conexion()
+crear_tabla()
+
+
+# ventana
+master = Tk()
+master.title("Control de Productos")
+master.configure(bg="#064C71")
+
+# imagen de fondo
+# BASE_DIR = os.path.dirname((os.path.abspath(__file__)))
+# ruta = os.path.join(BASE_DIR, "pngegg.png")
+# imagen_fondo = PhotoImage(file=ruta)
+# label_fondo = Label(master, image=imagen_fondo)
+# label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
+
+# titulo
 
 titulo = Label(
-    root,
-    text="Sistema de Stock y Ventas",
-    bg="#417E9B",
-    fg="black",
-    height=2,
-    width=80,
+    master,
+    text="CRUD Productos",
+    bg="#91D8F7",
+    fg="white",
+    font=("Arial", 14, "bold"),
 )
-titulo.grid(row=0, column=0, columnspan=4, padx=1, pady=1, sticky=W + E)
-producto = Label(root, text="Producto")
-producto.grid(row=1, column=0, sticky=W)
-stock = Label(root, text="Cantidad")
-stock.grid(row=2, column=0, sticky=W)
-precio = Label(root, text="Precio")
-precio.grid(row=3, column=0, sticky=W)
+titulo.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky=W + E)
 
-# Defino variables para tomar valores de campos de entrada
-a_val, b_val, c_val = StringVar(), DoubleVar(), DoubleVar()
-w_ancho = 20
+# variables
+codigo = Label(master, text="Código", font=("Arial", 11))
+codigo.grid(row=1, column=0, sticky=W)
+detalle = Label(master, text="Detalle", font=("Arial", 11))
+detalle.grid(row=2, column=0, sticky=W)
+stock_m = Label(master, text="Stock Minimo", font=("Arial", 11))
+stock_m.grid(row=3, column=0, sticky=W)
+precio = Label(master, text="Precio Unitario", font=("Arial", 11))
+precio.grid(row=4, column=0, sticky=W)
 
-entrada1 = Entry(root, textvariable=a_val, width=w_ancho)
-entrada1.grid(row=1, column=1)
-entrada2 = Entry(root, textvariable=b_val, width=w_ancho)
-entrada2.grid(row=2, column=1)
-entrada3 = Entry(root, textvariable=c_val, width=w_ancho)
-entrada3.grid(row=3, column=1)
+# variables de tkinter
+var_codigo = IntVar()
+var_detalle = StringVar()
+var_stock_m = IntVar()
+var_precio = float()
 
-# --------------------------------------------------
-# TREEVIEW
-# --------------------------------------------------
+# campos de entrada
+entry_codigo = Entry(master, textvariable=var_codigo, width=25)
+entry_codigo.grid(row=1, column=1)
+entry_detalle = Entry(master, textvariable=var_detalle, width=25)
+entry_detalle.grid(row=2, column=1)
+entry_stock_m = Entry(master, textvariable=var_stock_m, width=25)
+entry_stock_m.grid(row=3, column=1)
+entry_precio = Entry(master, textvariable=var_precio, width=25)
+entry_precio.grid(row=4, column=1)
 
-tree = ttk.Treeview(root)
+# treeview
+tree = ttk.Treeview(master)
 tree["columns"] = ("col1", "col2", "col3")
-tree.column("#0", width=90, minwidth=50, anchor=W)
-tree.column("col1", width=200, minwidth=80)
-tree.column("col2", width=200, minwidth=80)
-tree.column("col3", width=200, minwidth=80)
-tree.heading("#0", text="ID")
-tree.heading("col1", text="Producto")
-tree.heading("col2", text="cantidad")
-tree.heading("col3", text="precio")
-tree.grid(row=10, column=0, columnspan=4)
+tree.column("#0", width=40, minwidth=50, anchor=W)
+tree.column("col1", width=150, minwidth=150, anchor=W)
+tree.column("col2", width=150, minwidth=150, anchor=W)
 
-boton_alta = Button(
-    root, text="Alta", command=lambda: alta(a_val.get(), b_val.get(), c_val.get(), tree)
+
+tree.heading("#0", text="Código")
+tree.heading("col1", text="Detalle")
+tree.heading("col2", text="Stock Mínimo")
+tree.heading("col3", text="Precio")
+
+
+tree.grid(column=0, row=7, columnspan=3, padx=10, pady=10)
+
+# botones con funciones lambda
+boton_cargar = Button(
+    master,
+    text="Cargar Producto",
+    command=lambda: cargar(
+        var_codigo.get(), var_detalle.get(), var_stock_m.get(), var_precio, tree
+    ),
+    font=("Arial", 12, "bold"),
+    padx=10,
+    pady=5,
+    relief=FLAT,
 )
-boton_alta.grid(row=6, column=1)
+boton_cargar.grid(row=5, column=1, pady=10)
 
-boton_consulta = Button(root, text="Consultar", command=lambda: consultar())
-boton_consulta.grid(row=7, column=1)
+boton_eliminar = Button(
+    master,
+    text="Eliminar",
+    command=lambda: eliminar(tree),
+    font=("Arial", 12, "bold"),
+    padx=10,
+    pady=5,
+    relief=FLAT,
+)
+boton_eliminar.grid(row=8, column=1, pady=10)
 
-boton_borrar = Button(root, text="Borrar", command=lambda: borrar(tree))
-boton_borrar.grid(row=8, column=1)
-root.mainloop()
+boton_modificar = Button(
+    master,
+    text="Modificar",
+    command=lambda: modificar(var_nombre.get(), var_telefono.get(), tree),
+    font=("Arial", 12, "bold"),
+    padx=10,
+    pady=5,
+    relief=FLAT,
+)
+boton_modificar.grid(row=5, column=2, pady=10)
+
+master.mainloop()
