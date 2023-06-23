@@ -17,7 +17,7 @@ def crear_tabla():
     sql = """CREATE TABLE IF NOT EXISTS productos
              (codigo INTEGER PRIMARY KEY,
              descripcion varchar(50) NOT NULL,
-             stock_m INTEGER
+             stock_m INTEGER,
              precio FLOAT)
     """
     cursor.execute(sql)
@@ -32,12 +32,12 @@ def cargar(codigo, descripcion, stock_m, precio, tree):
         showerror("Error", "El detalle no puede ser nulo.")
         return
 
-    print(codigo, descripcion, precio, stock_m)
+    print(codigo, descripcion, stock_m, precio)
     con = conexion()
     cursor = con.cursor()
-    data = (int(codigo), descripcion, int(precio), int(stock_m))
+    data = (int(codigo), descripcion, float(precio), int(stock_m))
     sql = (
-        "INSERT INTO productos(codigo, descripcion, precio, stock_m) VALUES(?, ?, ?, ?)"
+        "INSERT INTO productos(codigo, descripcion, stock_m, precio) VALUES(?, ?, ?, ?)"
     )
     cursor.execute(sql, data)
     con.commit()
@@ -52,12 +52,12 @@ def eliminar(tree):
     item = tree.item(valor)
     print(item)
     print(item["text"])
-    mi_id = item["text"]
+    mi_codigo = item["text"]
 
     con = conexion()
     cursor = con.cursor()
 
-    data = (mi_id,)
+    data = (mi_codigo,)
     sql = "DELETE FROM productos WHERE codigo = ?;"
     cursor.execute(sql, data)
     con.commit()
@@ -70,7 +70,7 @@ def actualizar_treeview(mitreview):
     for element in records:
         mitreview.delete(element)
 
-    sql = "SELECT * FROM productos ORDER BY id ASC"
+    sql = "SELECT * FROM productos ORDER BY codigo ASC"
     con = conexion()
     cursor = con.cursor()
     datos = cursor.execute(sql)
@@ -85,14 +85,12 @@ def actualizar_treeview(mitreview):
 def modificar(codigo, descripcion, stock_m, precio, tree):
     valor = tree.selection()
     item = tree.item(valor)
-    mi_id = item["text"]
+    mi_codigo = item["text"]
 
     con = conexion()
     cursor = con.cursor()
-    data = (codigo, descripcion, stock_m, precio, mi_id)
-    sql = (
-        "UPDATE productos SET codigo=?, descripcion=?, stock_m=?, precio=?, WHERE id=?"
-    )
+    data = (codigo, descripcion, stock_m, precio, mi_codigo)
+    sql = "UPDATE productos SET codigo=?, descripcion=?, stock_m=?, precio=?, WHERE codigo=?"
     cursor.execute(sql, data)
     con.commit()
     print("Producto modificado")
@@ -128,7 +126,7 @@ titulo = Label(
 titulo.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky=W + E)
 
 # variables
-codigo = Label(master, text="Código", font=("Arial", 11))
+codigo = Label(master, text="Código", font=("None", 11))
 codigo.grid(row=1, column=0, sticky=W)
 detalle = Label(master, text="Detalle", font=("Arial", 11))
 detalle.grid(row=2, column=0, sticky=W)
@@ -155,7 +153,7 @@ entry_precio.grid(row=4, column=1)
 
 # treeview
 tree = ttk.Treeview(master)
-tree["columns"] = ("col1", "col2", "col3")
+tree["columns"] = ("col1", "col2", "col3", "col4")
 tree.column("#0", width=40, minwidth=50, anchor=W)
 tree.column("col1", width=150, minwidth=150, anchor=W)
 tree.column("col2", width=150, minwidth=150, anchor=W)
@@ -176,32 +174,31 @@ boton_cargar = Button(
     command=lambda: cargar(
         var_codigo.get(), var_detalle.get(), var_stock_m.get(), var_precio, tree
     ),
-    font=("Arial", 12, "bold"),
+    font=("Arial", 10, "bold"),
     padx=10,
     pady=5,
-    relief=FLAT,
 )
-boton_cargar.grid(row=5, column=1, pady=10)
+boton_cargar.grid(row=5, column=1, pady=5)
 
 boton_eliminar = Button(
     master,
     text="Eliminar",
     command=lambda: eliminar(tree),
-    font=("Arial", 12, "bold"),
+    font=("Arial", 10, "bold"),
     padx=10,
     pady=5,
-    relief=FLAT,
 )
 boton_eliminar.grid(row=8, column=1, pady=10)
 
 boton_modificar = Button(
     master,
     text="Modificar",
-    command=lambda: modificar(var_nombre.get(), var_telefono.get(), tree),
-    font=("Arial", 12, "bold"),
+    command=lambda: modificar(
+        var_codigo.get(), var_detalle.get(), var_stock_m.get(), var_precio.get(), tree
+    ),
+    font=("Arial", 10, "bold"),
     padx=10,
     pady=5,
-    relief=FLAT,
 )
 boton_modificar.grid(row=5, column=2, pady=10)
 
