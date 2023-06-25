@@ -49,7 +49,7 @@ def cargar(codigo, descripcion, stock_m, precio, tree):
         )
         return
 
-    if not re.match(r"^[0-9\s]+$", precio):
+    if not re.match(r"^[0-9.\s]+$", precio):
         showerror(
             "Error: No se puede cargar",
             "El precio debe ser un número no nulo",
