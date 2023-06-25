@@ -17,7 +17,7 @@ def crear_tabla():
     sql = """CREATE TABLE IF NOT EXISTS productos
              (codigo INTEGER PRIMARY KEY,
              descripcion varchar(50) NOT NULL,
-             stock_m REAL,
+             stock_m INTEGER,
              precio REAL)
     """
     cursor.execute(sql)
@@ -28,18 +28,20 @@ def crear_tabla():
 
 
 def cargar(codigo, descripcion, stock_m, precio, tree):
-    if not re.match(r"^[A-Za-z0-9\s]+$", descripcion):
-        showerror(
-            "Error: No se puede cargar",
-            "El detalle no puede ser nulo ni contener caracteres especiales",
-        )
-        return
     if not re.match(r"^[0-9\s]+$", codigo):
         showerror(
             "Error: No se puede cargar",
             "El codigo solo admite números y no puede quedar vacío",
         )
         return
+
+    if not re.match(r"^[A-Za-z0-9\s]+$", descripcion):
+        showerror(
+            "Error: No se puede cargar",
+            "El detalle no puede ser nulo ni contener caracteres especiales",
+        )
+        return
+
     if not re.match(r"^[A-Za-z0-9\s]+$", stock_m):
         showerror(
             "Error: No se puede cargar",
