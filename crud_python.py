@@ -17,8 +17,8 @@ def crear_tabla():
     sql = """CREATE TABLE IF NOT EXISTS productos
              (codigo INTEGER PRIMARY KEY,
              descripcion varchar(50) NOT NULL,
-             stock_m INTEGER,
-             precio NUMERIC)
+             stock_m REAL,
+             precio REAL)
     """
     cursor.execute(sql)
     con.commit()
@@ -29,13 +29,17 @@ def crear_tabla():
 
 def cargar(codigo, descripcion, stock_m, precio, tree):
     if not re.match(r"^[A-Za-z0-9\s]+$", descripcion):
-        showerror("Error", "El detalle no puede ser nulo.")
+        showerror(
+            "Error: No se puede cargar",
+            "El detalle no puede ser nulo ni contener caracteres especiales",
+        )
         return
 
     print(codigo, descripcion, stock_m, precio)
+    print("Punto verificacion 1")
     con = conexion()
     cursor = con.cursor()
-    data = (int(codigo), descripcion, float(precio), int(stock_m))
+    data = (codigo, descripcion, stock_m, precio)
     sql = (
         "INSERT INTO productos(codigo, descripcion, stock_m, precio) VALUES(?, ?, ?, ?)"
     )
@@ -70,7 +74,7 @@ def actualizar_treeview(mitreview):
     for element in records:
         mitreview.delete(element)
 
-    sql = "SELECT * FROM productos ORDER BY codigo ASC"
+    sql = "SELECT * FROM productos ORDER BY descripcion ASC"
     con = conexion()
     cursor = con.cursor()
     datos = cursor.execute(sql)
@@ -78,7 +82,9 @@ def actualizar_treeview(mitreview):
     resultado = datos.fetchall()
     for fila in resultado:
         print(fila)
-        mitreview.insert("", 0, text=fila[0], values=(fila[1], fila[2]))
+        mitreview.insert(
+            "", 0, text=fila[0], values=(fila[1], fila[2])  # , fila[3], fila[4])
+        )
 
 
 # funcion para modificacion
@@ -120,7 +126,7 @@ titulo = Label(
     master,
     text="CRUD Productos",
     bg="#91D8F7",
-    fg="white",
+    fg="black",
     font=("Arial", 14, "bold"),
 )
 titulo.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky=W + E)
