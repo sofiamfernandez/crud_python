@@ -5,7 +5,7 @@ import sqlite3
 import re
 
 
-# funciones para la base de datos
+# funciones para la base de datos 1
 def conexion():
     con = sqlite3.connect("Ventas.db")
     return con
