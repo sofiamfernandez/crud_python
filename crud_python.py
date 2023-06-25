@@ -74,7 +74,7 @@ def actualizar_treeview(mitreview):
     for element in records:
         mitreview.delete(element)
 
-    sql = "SELECT * FROM productos ORDER BY descripcion ASC"
+    sql = "SELECT * FROM productos ORDER BY codigo ASC"
     con = conexion()
     cursor = con.cursor()
     datos = cursor.execute(sql)
@@ -82,9 +82,7 @@ def actualizar_treeview(mitreview):
     resultado = datos.fetchall()
     for fila in resultado:
         print(fila)
-        mitreview.insert(
-            "", 0, text=fila[0], values=(fila[1], fila[2])  # , fila[3], fila[4])
-        )
+        mitreview.insert("", 0, text=fila[0], values=(fila[1], fila[2], fila[3]))
 
 
 # funcion para modificacion
@@ -159,18 +157,18 @@ entry_precio.grid(row=4, column=1)
 
 # treeview
 tree = ttk.Treeview(master)
-tree["columns"] = ("col1", "col2", "col3", "col4")
-tree.column("#0", width=0, minwidth=0, anchor=W)
-tree.column("col1", width=50, minwidth=30, anchor=W)
-tree.column("col2", width=200, minwidth=50, anchor=W)
+tree["columns"] = ("col1", "col2", "col3")
+tree.column("#0", width=50, minwidth=10, anchor=W)
+tree.column("col1", width=200, minwidth=30, anchor=W)
+tree.column("col2", width=100, minwidth=50, anchor=W)
 tree.column("col3", width=90, minwidth=40, anchor=W)
-tree.column("col4", width=50, minwidth=40, anchor=W)
+# tree.column("col4", width=50, minwidth=40, anchor=W)
 
 
-tree.heading("col1", text="Código")
-tree.heading("col2", text="Detalle")
-tree.heading("col3", text="Stock Mínimo")
-tree.heading("col4", text="Precio")
+tree.heading("#0", text="Código")
+tree.heading("col1", text="Detalle")
+tree.heading("col2", text="Stock Mínimo")
+tree.heading("col3", text="Precio")
 
 
 tree.grid(column=0, row=7, columnspan=3, padx=10, pady=10)
