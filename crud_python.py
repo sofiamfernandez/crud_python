@@ -34,6 +34,25 @@ def cargar(codigo, descripcion, stock_m, precio, tree):
             "El detalle no puede ser nulo ni contener caracteres especiales",
         )
         return
+    if not re.match(r"^[0-9\s]+$", codigo):
+        showerror(
+            "Error: No se puede cargar",
+            "El codigo solo admite números y no puede quedar vacío",
+        )
+        return
+    if not re.match(r"^[A-Za-z0-9\s]+$", stock_m):
+        showerror(
+            "Error: No se puede cargar",
+            "El stock mínimo debe ser un número no nulo",
+        )
+        return
+
+    if not re.match(r"^[A-Za-z0-9\s]+$", precio):
+        showerror(
+            "Error: No se puede cargar",
+            "El precio debe ser un número no nulo",
+        )
+        return
 
     print(codigo, descripcion, stock_m, precio)
     con = conexion()
@@ -132,10 +151,10 @@ precio = Label(master, text="Precio Unitario", font=("Arial", 11))
 precio.grid(row=4, column=0, sticky=W)
 
 # variables de tkinter
-var_codigo = IntVar()
+var_codigo = StringVar()
 var_detalle = StringVar()
-var_stock_m = IntVar()
-var_precio = DoubleVar()
+var_stock_m = StringVar()
+var_precio = StringVar()
 
 # campos de entrada
 entry_codigo = Entry(master, textvariable=var_codigo, width=25)
