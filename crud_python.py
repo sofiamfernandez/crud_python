@@ -5,7 +5,7 @@ import sqlite3
 import re
 
 
-# funciones para la base de datos 1
+# funciones para la base de datos
 def conexion():
     con = sqlite3.connect("Ventas.db")
     return con
@@ -36,7 +36,6 @@ def cargar(codigo, descripcion, stock_m, precio, tree):
         return
 
     print(codigo, descripcion, stock_m, precio)
-    print("Punto verificacion 1")
     con = conexion()
     cursor = con.cursor()
     data = (codigo, descripcion, stock_m, precio)
@@ -94,7 +93,7 @@ def modificar(codigo, descripcion, stock_m, precio, tree):
     con = conexion()
     cursor = con.cursor()
     data = (codigo, descripcion, stock_m, precio, mi_codigo)
-    sql = "UPDATE productos SET codigo=?, descripcion=?, stock_m=?, precio=?, WHERE codigo=?"
+    sql = "UPDATE productos SET codigo=?, descripcion=?, stock_m=?, precio=? WHERE codigo=?"
     cursor.execute(sql, data)
     con.commit()
     print("Producto modificado")
@@ -110,13 +109,6 @@ crear_tabla()
 master = Tk()
 master.title("Control de Productos")
 master.configure(bg="#064C71")
-
-# imagen de fondo
-# BASE_DIR = os.path.dirname((os.path.abspath(__file__)))
-# ruta = os.path.join(BASE_DIR, "pngegg.png")
-# imagen_fondo = PhotoImage(file=ruta)
-# label_fondo = Label(master, image=imagen_fondo)
-# label_fondo.place(x=0, y=0, relwidth=1, relheight=1)
 
 # titulo
 
@@ -162,7 +154,6 @@ tree.column("#0", width=50, minwidth=10, anchor=W)
 tree.column("col1", width=200, minwidth=30, anchor=W)
 tree.column("col2", width=100, minwidth=50, anchor=W)
 tree.column("col3", width=90, minwidth=40, anchor=W)
-# tree.column("col4", width=50, minwidth=40, anchor=W)
 
 
 tree.heading("#0", text="Código")
@@ -208,4 +199,5 @@ boton_modificar = Button(
 )
 boton_modificar.grid(row=5, column=2, pady=10)
 
+actualizar_treeview(tree)
 master.mainloop()
