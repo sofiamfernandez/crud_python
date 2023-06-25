@@ -129,7 +129,7 @@ titulo = Label(
     fg="black",
     font=("Arial", 14, "bold"),
 )
-titulo.grid(row=0, column=1, columnspan=3, padx=10, pady=10, sticky=W + E)
+titulo.grid(row=0, column=0, columnspan=3, padx=10, pady=10, sticky=W + E)
 
 # variables
 codigo = Label(master, text="Código", font=("None", 11))
@@ -145,7 +145,7 @@ precio.grid(row=4, column=0, sticky=W)
 var_codigo = IntVar()
 var_detalle = StringVar()
 var_stock_m = IntVar()
-var_precio = float()
+var_precio = DoubleVar()
 
 # campos de entrada
 entry_codigo = Entry(master, textvariable=var_codigo, width=25)
@@ -160,15 +160,17 @@ entry_precio.grid(row=4, column=1)
 # treeview
 tree = ttk.Treeview(master)
 tree["columns"] = ("col1", "col2", "col3", "col4")
-tree.column("#0", width=40, minwidth=50, anchor=W)
-tree.column("col1", width=150, minwidth=150, anchor=W)
-tree.column("col2", width=150, minwidth=150, anchor=W)
+tree.column("#0", width=0, minwidth=0, anchor=W)
+tree.column("col1", width=50, minwidth=30, anchor=W)
+tree.column("col2", width=200, minwidth=50, anchor=W)
+tree.column("col3", width=90, minwidth=40, anchor=W)
+tree.column("col4", width=50, minwidth=40, anchor=W)
 
 
-tree.heading("#0", text="Código")
-tree.heading("col1", text="Detalle")
-tree.heading("col2", text="Stock Mínimo")
-tree.heading("col3", text="Precio")
+tree.heading("col1", text="Código")
+tree.heading("col2", text="Detalle")
+tree.heading("col3", text="Stock Mínimo")
+tree.heading("col4", text="Precio")
 
 
 tree.grid(column=0, row=7, columnspan=3, padx=10, pady=10)
@@ -178,7 +180,7 @@ boton_cargar = Button(
     master,
     text="Cargar Producto",
     command=lambda: cargar(
-        var_codigo.get(), var_detalle.get(), var_stock_m.get(), var_precio, tree
+        var_codigo.get(), var_detalle.get(), var_stock_m.get(), var_precio.get(), tree
     ),
     font=("Arial", 10, "bold"),
     padx=10,
