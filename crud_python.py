@@ -42,14 +42,14 @@ def cargar(codigo, descripcion, stock_m, precio, tree):
         )
         return
 
-    if not re.match(r"^[A-Za-z0-9\s]+$", stock_m):
+    if not re.match(r"^[0-9\s]+$", stock_m):
         showerror(
             "Error: No se puede cargar",
             "El stock mínimo debe ser un número no nulo",
         )
         return
 
-    if not re.match(r"^[A-Za-z0-9\s]+$", precio):
+    if not re.match(r"^[0-9\s]+$", precio):
         showerror(
             "Error: No se puede cargar",
             "El precio debe ser un número no nulo",
