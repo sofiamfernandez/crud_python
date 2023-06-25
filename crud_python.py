@@ -85,7 +85,7 @@ def actualizar_treeview(mitreview):
         mitreview.insert("", 0, text=fila[0], values=(fila[1], fila[2], fila[3]))
 
 
-# funcion para modificacion
+# definición de función modificación de producto
 def modificar(codigo, descripcion, stock_m, precio, tree):
     valor = tree.selection()
     item = tree.item(valor)
