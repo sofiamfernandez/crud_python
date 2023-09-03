@@ -84,7 +84,7 @@ class Vista:
         for element in records:
             self.tree.delete(element)
 
-        productos = modelo.obtener_productos()
+        productos = self.modelo.obtener_productos()
         for producto in productos:
             self.tree.insert(
                 "", 0, text=producto[0], values=(producto[1], producto[2], producto[3])
