@@ -1,15 +1,17 @@
 class Elemento:
-    def __init__(self, nombre, descripcion):
-        self.nombre = nombre
-        self.descripcion = descripcion
+    def __init__(self, codigo, detalle, stock_min, precio):
+        self.codigo = codigo
+        self.detalle = detalle
+        self.stock_min = stock_min
+        self.precio = precio
 
 
 class ListaElementos:
     def __init__(self):
         self.elementos = []
 
-    def agregar_elemento(self, nombre, descripcion):
-        elemento = Elemento(nombre, descripcion)
+    def agregar_elemento(self, codigo, detalle, stock_min, precio):
+        elemento = Elemento(codigo, detalle, stock_min, precio)
         self.elementos.append(elemento)
 
     def obtener_elementos(self):

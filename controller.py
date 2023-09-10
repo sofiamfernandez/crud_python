@@ -1,7 +1,6 @@
 from model import ListaElementos
 from view import Vista
 import tkinter as tk
-from tkinter import ttk
 
 
 class Controlador:
@@ -48,7 +47,7 @@ class Controlador:
     def mostrar_elemento_seleccionado(self, event):
         elemento_seleccionado = self.vista.elementos_listbox.get(tk.ACTIVE)
         if elemento_seleccionado:
-            elemento = self.obtener_elemento_por_nombre(elemente_selected)
+            elemento = self.obtener_elemento_por_nombre(elemento_seleccionado)
             self.vista.nombre_entry.delete(0, tk.END)
             self.vista.nombre_entry.insert(0, elemento.nombre)
             self.vista.descripcion_entry.delete(0, tk.END)
