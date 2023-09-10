@@ -1,27 +1,3 @@
-import sqlite3
-
-
-class BaseDatos:  # la base de datos
-    def conexion(self):
-        con = sqlite3.connect("Ventas.db")
-        return con
-
-    def crear_tabla(self):
-        con = self.conexion()
-        cursor = con.cursor()
-        sql = """CREATE TABLE IF NOT EXISTS productos
-             (codigo INTEGER PRIMARY KEY,
-             descripcion varchar(50) NOT NULL,
-             stock_m INTEGER,
-             precio REAL)
-             """
-
-        cursor.execute(sql)
-        con.commit()
-        self.conexion()
-        self.crear_tabla()
-
-
 class Elemento:
     def __init__(self, codigo, detalle, stock_min, precio):
         self.codigo = codigo
