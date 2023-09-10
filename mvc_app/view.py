@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
-import modelo
+from model import Modelo
 
 
 class Vista:
@@ -68,7 +68,7 @@ class Vista:
         descripcion = self.entry_vars[1].get()
         stock_m = self.entry_vars[2].get()
         precio = self.entry_vars[3].get()
-        modelo.cargar_producto(codigo, descripcion, stock_m, precio)
+        Modelo.cargar_producto(codigo, descripcion, stock_m, precio)
         self.actualizar_treeview()
 
     def eliminar_producto(self):
@@ -76,7 +76,7 @@ class Vista:
         if not selected_item:
             return
         codigo = self.tree.item(selected_item, "text")
-        modelo.eliminar_producto(codigo)
+        Modelo.eliminar_producto(codigo)
         self.actualizar_treeview()
 
     def actualizar_treeview(self):
@@ -84,7 +84,7 @@ class Vista:
         for element in records:
             self.tree.delete(element)
 
-        productos = self.modelo.obtener_productos()
+            productos = self.model.obtener_productos()
         for producto in productos:
             self.tree.insert(
                 "", 0, text=producto[0], values=(producto[1], producto[2], producto[3])
