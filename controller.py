@@ -13,8 +13,8 @@ class Controlador:
         self.vista.agregar_button.config(command=self.agregar_elemento)
         self.vista.actualizar_button.config(command=self.actualizar_elemento)
         self.vista.eliminar_button.config(command=self.eliminar_elemento)
-        self.vista.elementos_listbox.bind(
-            "<<ListboxSelect>>", self.mostrar_elemento_seleccionado
+        self.vista.elementos_treeview.bind(
+            "<<TreeviewSelect>>", self.mostrar_elemento_seleccionado
         )
 
         self.actualizar_lista_elementos()
@@ -55,15 +55,19 @@ class Controlador:
             self.vista.detalle_entry.insert(0, elemento.detalle)
             self.vista.descripcion_entry.delete(0, tk.END)
 
-    def obtener_elemento_por_detalle(self, detalle):
+    def obtener_elemento_por_codigo(self, codigo):
         for elemento in self.lista_elementos.obtener_elementos():
-            if elemento.detalle == detalle:
+            if elemento.codigo == codigo:
                 return elemento
 
     def actualizar_lista_elementos(self):
-        self.vista.elementos_listbox.delete(0, tk.END)
+        self.vista.elementos_treeview.bind(
+            "<<TreeviewSelect>>", self.mostrar_elemento_seleccionado
+        )
         for elemento in self.lista_elementos.obtener_elementos():
-            self.vista.elementos_listbox.insert(tk.END, elemento.detalle)
+            self.vista.elementos_treeview.bind(
+                "<<TreeviewSelect>>", self.mostrar_elemento_seleccionado
+            )
 
 
 if __name__ == "__main__":
